@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <title>Профиль</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+    <h1>Профиль</h1>
+    <p>Имя: {{ user.username }}</p>
+    <p>Email: {{ user.email }}</p>
+    <p>Дата регистрации: {{ user.date_joined }}</p>
+    <a href="{% url 'posts:post_list' %}">Назад</a>
+    <a href="{% url 'users:logout' %}">Выйти</a>
+</body>
+</html>

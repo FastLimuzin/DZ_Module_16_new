@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <title>Посты</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+    <h1>Все посты</h1>
+    {% if user.is_authenticated %}
+        <p>Привет, {{ user.username }}! <a href="{% url 'users:profile' %}">Профиль</a> | <a href="{% url 'users:logout' %}">Выйти</a></p>
+        <a href="{% url 'posts:post_create' %}">Создать пост</a>
+    {% else %}
+        <p><a href="{% url 'users:login' %}">Войти</a> | <a href="{% url 'users:register' %}">Регистрация</a></p>
+    {% endif %}
+    {% for post in posts %}
+        <h2>{{ post.title }}</h2>
+        <p>{{ post.content }}</p>
+        {% if post.image %}
+            <img src="{{ post.image.url }}" alt="{{ post.title }}" width="200">
+        {% endif %}
+        <p>
+            <a href="{% url 'posts:post_detail' post.id %}">Читать далее</a>
+            {% if user.is_authenticated %}
+                | <a href="{% url 'posts:post_update' post.id %}">Редактировать</a> |
+                <a href="{% url 'posts:post_delete' post.id %}">Удалить</a>
+            {% endif %}
+        </p>
+        <hr>
+    {% empty %}
+        <p>Пока нет постов.</p>
+    {% endfor %}
+</body>
+</html>

@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <title>{{ post.title }}</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+    <h1>{{ post.title }}</h1>
+    <p>{{ post.content }}</p>
+    {% if post.image %}
+        <img src="{{ post.image.url }}" alt="{{ post.title }}" width="300">
+    {% endif %}
+    <p>Создан: {% load post_tags %}{{ post.created_at|format_date }}</p>
+    <h3>Комментарии</h3>
+    {% for comment in post.comments.all %}
+        <p>{{ comment.text }} ({{ comment.created_at|format_date }})</p>
+    {% empty %}
+        <p>Пока нет комментариев.</p>
+    {% endfor %}
+    <a href="{% url 'posts:post_list' %}">Назад</a>
+</body>
+</html>

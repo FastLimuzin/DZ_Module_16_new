@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <title>Редактировать пост</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+    <h1>Редактировать пост</h1>
+    {% if messages %}
+        {% for message in messages %}
+            <p>{{ message }}</p>
+        {% endfor %}
+    {% endif %}
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <p>Заголовок: <input type="text" name="title" value="{{ post.title }}"></p>
+        <p>Содержание: <textarea name="content">{{ post.content }}</textarea></p>
+        <p>Изображение: <input type="file" name="image"> {% if post.image %}<img src="{{ post.image.url }}" width="100">{% endif %}</p>
+        <button type="submit">Сохранить</button>
+    </form>
+    <a href="{% url 'posts:post_list' %}">Назад</a>
+</body>
+</html>
