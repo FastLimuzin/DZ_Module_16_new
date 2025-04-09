@@ -29,6 +29,9 @@ def post_create(request):
 @login_required
 def post_update(request, post_id):
     post = get_object_or_404(Post, id=post_id)
+    if post.author != request.user:
+        messages.error(request, 'Вы не можете редактировать чужой пост!')
+        return redirect('posts:post_list')
     if request.method == 'POST':
         post.title = request.POST.get('title')
         post.content = request.POST.get('content')
@@ -42,6 +45,9 @@ def post_update(request, post_id):
 @login_required
 def post_delete(request, post_id):
     post = get_object_or_404(Post, id=post_id)
+    if post.author != request.user:
+        messages.error(request, 'Вы не можете удалить чужой пост!')
+        return redirect('posts:post_list')
     if request.method == 'POST':
         post.delete()
         messages.success(request, 'Пост удалён!')

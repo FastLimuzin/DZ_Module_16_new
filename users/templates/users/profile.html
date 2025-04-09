@@ -9,8 +9,11 @@
     <h1>Профиль</h1>
     <p>Имя: {{ user.username }}</p>
     <p>Email: {{ user.email }}</p>
+    <p>Имя: {{ user.first_name }}</p>
+    <p>Фамилия: {{ user.last_name }}</p>
     <p>Дата регистрации: {{ user.date_joined }}</p>
-    <a href="{% url 'posts:post_list' %}">Назад</a>
+    <a href="{% url 'users:profile_update' %}">Изменить данные</a>
     <a href="{% url 'users:logout' %}">Выйти</a>
+    <a href="{% url 'posts:post_list' %}">Назад</a>
 </body>
 </html>

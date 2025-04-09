@@ -13,6 +13,11 @@
     {% else %}
         <p><a href="{% url 'users:login' %}">Войти</a> | <a href="{% url 'users:register' %}">Регистрация</a></p>
     {% endif %}
+    {% if messages %}
+        {% for message in messages %}
+            <p>{{ message }}</p>
+        {% endfor %}
+    {% endif %}
     {% for post in posts %}
         <h2>{{ post.title }}</h2>
         <p>{{ post.content }}</p>
@@ -21,7 +26,7 @@
         {% endif %}
         <p>
             <a href="{% url 'posts:post_detail' post.id %}">Читать далее</a>
-            {% if user.is_authenticated %}
+            {% if user.is_authenticated and post.author == user %}
                 | <a href="{% url 'posts:post_update' post.id %}">Редактировать</a> |
                 <a href="{% url 'posts:post_delete' post.id %}">Удалить</a>
             {% endif %}
