@@ -19,18 +19,20 @@
         {% endfor %}
     {% endif %}
     {% for post in posts %}
-        <h2>{{ post.title }}</h2>
-        <p>{{ post.content }}</p>
-        {% if post.image %}
-            <img src="{{ post.image.url }}" alt="{{ post.title }}" width="200">
-        {% endif %}
-        <p>
-            <a href="{% url 'posts:post_detail' post.id %}">Читать далее</a>
-            {% if user.is_authenticated and post.author == user %}
-                | <a href="{% url 'posts:post_update' post.id %}">Редактировать</a> |
-                <a href="{% url 'posts:post_delete' post.id %}">Удалить</a>
+        <div class="post">
+            <h2>{{ post.title }}</h2>
+            <p>{{ post.content }}</p>
+            {% if post.image %}
+                <img src="{{ post.image.url }}" alt="{{ post.title }}">
             {% endif %}
-        </p>
+            <p>
+                <a href="{% url 'posts:post_detail' post.pk %}">Читать далее</a>
+                {% if user.is_authenticated and post.author == user %}
+                    | <a href="{% url 'posts:post_update' post.pk %}">Редактировать</a> |
+                    <a href="{% url 'posts:post_delete' post.pk %}">Удалить</a>
+                {% endif %}
+            </p>
+        </div>
         <hr>
     {% empty %}
         <p>Пока нет постов.</p>
