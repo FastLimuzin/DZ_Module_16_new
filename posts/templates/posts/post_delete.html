@@ -6,7 +6,7 @@
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
 </head>
 <body>
-    <h1>Удалить пост "{{ post.title }}"?</h1>
+    <h1>Удалить пост "{{ object.title }}"?</h1>
     {% if messages %}
         {% for message in messages %}
             <p>{{ message }}</p>

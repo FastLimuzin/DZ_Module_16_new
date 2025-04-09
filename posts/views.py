@@ -1,55 +1,66 @@
-from django.shortcuts import render, get_object_or_404, redirect
+from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from .models import Post
+from django.urls import reverse_lazy
 from django.contrib import messages
-from django.contrib.auth.decorators import login_required
+from django.shortcuts import redirect
 
-def post_list(request):
-    posts = Post.objects.all()
-    return render(request, 'posts/post_list.html', {'posts': posts})
+class PostListView(ListView):
+    model = Post
+    template_name = 'posts/post_list.html'
+    context_object_name = 'posts'
 
-def post_detail(request, post_id):
-    post = get_object_or_404(Post, id=post_id)
-    return render(request, 'posts/post_detail.html', {'post': post})
+class PostDetailView(DetailView):
+    model = Post
+    template_name = 'posts/post_detail.html'
+    context_object_name = 'post'
 
-@login_required
-def post_create(request):
-    if request.method == 'POST':
-        title = request.POST.get('title')
-        content = request.POST.get('content')
-        image = request.FILES.get('image')
-        author = request.user
-        if title and content:
-            post = Post.objects.create(title=title, content=content, image=image, author=author)
-            messages.success(request, 'Пост создан!')
-            return redirect('posts:post_list')
-        else:
-            messages.error(request, 'Заполните все поля!')
-    return render(request, 'posts/post_create.html')
+class PostCreateView(LoginRequiredMixin, CreateView):
+    model = Post
+    template_name = 'posts/post_create.html'
+    fields = ['title', 'content', 'image']
+    success_url = reverse_lazy('posts:post_list')
 
-@login_required
-def post_update(request, post_id):
-    post = get_object_or_404(Post, id=post_id)
-    if post.author != request.user:
-        messages.error(request, 'Вы не можете редактировать чужой пост!')
+    def form_valid(self, form):
+        form.instance.author = self.request.user
+        messages.success(self.request, 'Пост создан!')
+        return super().form_valid(form)
+
+    def form_invalid(self, form):
+        messages.error(self.request, 'Заполните все поля!')
+        return super().form_invalid(form)
+
+class PostUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    model = Post
+    template_name = 'posts/post_update.html'
+    fields = ['title', 'content', 'image']
+    success_url = reverse_lazy('posts:post_list')
+
+    def test_func(self):
+        post = self.get_object()
+        return post.author == self.request.user
+
+    def handle_no_permission(self):
+        messages.error(self.request, 'Вы не можете редактировать чужой пост!')
         return redirect('posts:post_list')
-    if request.method == 'POST':
-        post.title = request.POST.get('title')
-        post.content = request.POST.get('content')
-        if request.FILES.get('image'):
-            post.image = request.FILES.get('image')
-        post.save()
-        messages.success(request, 'Пост обновлён!')
-        return redirect('posts:post_list')
-    return render(request, 'posts/post_update.html', {'post': post})
 
-@login_required
-def post_delete(request, post_id):
-    post = get_object_or_404(Post, id=post_id)
-    if post.author != request.user:
-        messages.error(request, 'Вы не можете удалить чужой пост!')
+    def form_valid(self, form):
+        messages.success(self.request, 'Пост обновлён!')
+        return super().form_valid(form)
+
+class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
+    model = Post
+    template_name = 'posts/post_delete.html'
+    success_url = reverse_lazy('posts:post_list')
+
+    def test_func(self):
+        post = self.get_object()
+        return post.author == self.request.user
+
+    def handle_no_permission(self):
+        messages.error(self.request, 'Вы не можете удалить чужой пост!')
         return redirect('posts:post_list')
-    if request.method == 'POST':
-        post.delete()
-        messages.success(request, 'Пост удалён!')
-        return redirect('posts:post_list')
-    return render(request, 'posts/post_delete.html', {'post': post})
+
+    def form_valid(self, form):
+        messages.success(self.request, 'Пост удалён!')
+        return super().form_valid(form)

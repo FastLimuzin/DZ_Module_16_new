@@ -14,11 +14,9 @@
     {% endif %}
     <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
-        <p>Заголовок: <input type="text" name="title"></p>
-        <p>Содержание: <textarea name="content"></textarea></p>
-        <p>Изображение: <input type="file" name="image"></p>
+        {{ form.as_p }}
         <button type="submit">Создать</button>
     </form>
     <a href="{% url 'posts:post_list' %}">Назад</a>
 </body>
-</html>>
+</html>

@@ -2,10 +2,11 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from datetime import datetime
+from django.utils.translation import gettext_lazy as _
 
 def validate_creation_date(value):
     if value > datetime.now().replace(tzinfo=None):
-        raise ValidationError("Дата создания не может быть в будущем!")
+        raise ValidationError(_('Дата создания не может быть в будущем!'))
 
 class Post(models.Model):
     title = models.CharField(max_length=200, verbose_name="Заголовок")
