@@ -1,8 +1,8 @@
-from django.views.generic import FormView, TemplateView, UpdateView, View  # Добавь View
+from django.views.generic import FormView, TemplateView, UpdateView, View
 from django.contrib.auth.views import LoginView, PasswordChangeView
-from django.contrib.auth.forms import AuthenticationForm, PasswordChangeForm, UserChangeForm
-from .forms import CustomUserCreationForm
-from django.contrib.auth import login, logout, update_session_auth_hash  # Добавь logout
+from django.contrib.auth.forms import AuthenticationForm, PasswordChangeForm
+from .forms import CustomUserCreationForm, CustomUserUpdateForm  # Добавь новый импорт
+from django.contrib.auth import login, logout, update_session_auth_hash
 from django.urls import reverse_lazy
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -12,6 +12,7 @@ import random
 import string
 
 def generate_random_password():
+    """Generate a random 8-character password."""
     characters = string.ascii_letters + string.digits
     return ''.join(random.choice(characters) for _ in range(8))
 
@@ -23,14 +24,17 @@ class RegisterView(FormView):
     def form_valid(self, form):
         user = form.save()
         login(self.request, user)
-        send_mail(
-            'Добро пожаловать!',
-            f'Ваш аккаунт создан. Логин: {user.username}',
-            'from@example.com',
-            [user.email],
-            fail_silently=False,
-        )
-        messages.success(self.request, 'Регистрация прошла успешно! Письмо отправлено на ваш email.')
+        try:
+            send_mail(
+                'Добро пожаловать!',
+                f'Ваш аккаунт создан. Логин: {user.username}',
+                'from@example.com',
+                [user.email],
+                fail_silently=True,
+            )
+        except Exception:
+            pass
+        messages.success(self.request, 'Регистрация прошла успешно!')
         return super().form_valid(form)
 
     def form_invalid(self, form):
@@ -59,7 +63,7 @@ class ProfileView(LoginRequiredMixin, TemplateView):
 
 class ProfileUpdateView(LoginRequiredMixin, UpdateView):
     template_name = 'users/profile_update.html'
-    form_class = UserChangeForm
+    form_class = CustomUserUpdateForm  # Используем новую форму
     success_url = reverse_lazy('users:profile')
 
     def get_object(self):
@@ -100,20 +104,23 @@ class ResetPasswordView(LoginRequiredMixin, TemplateView):
         request.user.set_password(new_password)
         request.user.save()
         update_session_auth_hash(request, request.user)
-        send_mail(
-            'Ваш новый пароль',
-            f'Ваш новый пароль: {new_password}',
-            'from@example.com',
-            [request.user.email],
-            fail_silently=False,
-        )
+        try:
+            send_mail(
+                'Ваш новый пароль',
+                f'Ваш новый пароль: {new_password}',
+                'from@example.com',
+                [request.user.email],
+                fail_silently=True,
+            )
+        except Exception:
+            pass
         messages.success(request, 'Новый пароль сгенерирован и отправлен на ваш email.')
         return redirect('users:profile')
 
-class UserLogoutView(View):  # Новый кастомный класс
+class UserLogoutView(View):
     template_name = 'users/logout.html'
 
     def get(self, request, *args, **kwargs):
-        logout(request)  # Выполняем выход
+        logout(request)
         messages.success(request, 'Вы вышли.')
         return redirect('posts:post_list')
