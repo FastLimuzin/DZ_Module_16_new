@@ -1,10 +1,29 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
+    <title>{% if form.instance.pk %}Редактировать пост{% else %}Создать пост{% endif %}</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
 </head>
 <body>
-$END$
+    <h1>{% if form.instance.pk %}Редактировать пост{% else %}Создать пост{% endif %}</h1>
+    {% if messages %}
+        {% for message in messages %}
+            <p class="message">{{ message }}</p>
+        {% endfor %}
+    {% endif %}
+    <form method="post" enctype="multipart/form-data" class="profile-form">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <h2>Родословная персонажа</h2>
+        {{ pedigree_formset.management_form }}
+        {% for formset_form in pedigree_formset %}
+            <div class="form-group">
+                {{ formset_form.as_p }}
+            </div>
+        {% endfor %}
+        <button type="submit">Сохранить</button>
+        <a href="{% url 'posts:post_list' %}">Назад</a>
+    </form>
 </body>
 </html>

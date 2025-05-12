@@ -9,14 +9,21 @@
     <h1>Редактировать пост</h1>
     {% if messages %}
         {% for message in messages %}
-            <p>{{ message }}</p>
+            <p class="message">{{ message }}</p>
         {% endfor %}
     {% endif %}
-    <form method="post" enctype="multipart/form-data">
+    <form method="post" enctype="multipart/form-data" class="profile-form">
         {% csrf_token %}
         {{ form.as_p }}
+        <h2>Происхождение персонажа</h2>
+        {{ origin_formset.management_form }}
+        {% for formset_form in origin_formset %}
+            <div class="form-group">
+                {{ formset_form.as_p }}
+            </div>
+        {% endfor %}
         <button type="submit">Сохранить</button>
+        <a href="{% url 'posts:post_list' %}">Назад</a>
     </form>
-    <a href="{% url 'posts:post_list' %}">Назад</a>
 </body>
 </html>

@@ -136,3 +136,28 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Email settings
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'  # Используем консоль для тестов
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'fastlimuzin@gmail.com'
+EMAIL_HOST_PASSWORD = '123War456%'  # Замени на пароль Gmail
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+
+# Настройки авторизации
+LOGIN_URL = '/users/login/'
+LOGIN_REDIRECT_URL = '/'
+LOGOUT_REDIRECT_URL = '/users/login/'  # После выхода перенаправляем на логин
+CSRF_COOKIE_SECURE = False  # Убедимся, что CSRF-куки передаются без HTTPS (для локального теста)
+CSRF_COOKIE_HTTPONLY = False
+# Настройки сессий
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django_redis.cache.RedisCache',
+        'LOCATION': 'redis://127.0.0.1:6379/1',
+        'OPTIONS': {
+            'CLIENT_CLASS': 'django_redis.client.DefaultClient',
+        }
+    }
+}

@@ -7,16 +7,12 @@
 </head>
 <body>
     <h1>Вход</h1>
-    {% if messages %}
-        {% for message in messages %}
-            <p>{{ message }}</p>
-        {% endfor %}
-    {% endif %}
+    <p>Тут вы найдёте посты про Marvel, можете читать, создавать или дополнять посты.</p>
     <form method="post">
         {% csrf_token %}
         {{ form.as_p }}
         <button type="submit">Войти</button>
     </form>
-    <a href="{% url 'posts:post_list' %}">Назад</a>
+    <p>Нет аккаунта? <a href="{% url 'users:register' %}">Регистрация</a></p>
 </body>
 </html>

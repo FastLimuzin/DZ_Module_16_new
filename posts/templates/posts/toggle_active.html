@@ -1,10 +1,17 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
+    <title>Сменить статус поста</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
 </head>
 <body>
-$END$
+    <h1>Сменить статус поста "{{ post.title }}"</h1>
+    <p>Текущий статус: {% if post.is_active %}Активен{% else %}Неактивен{% endif %}</p>
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit">Сменить статус</button>
+        <a href="{% url 'posts:post_list' %}">Отмена</a>
+    </form>
 </body>
 </html>

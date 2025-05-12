@@ -7,17 +7,47 @@
 </head>
 <body>
     <h1>{{ post.title }}</h1>
-    <p>{{ post.content }}</p>
-    {% if post.image %}
-        <img src="{{ post.image.url }}" alt="{{ post.title }}" width="300">
-    {% endif %}
-    <p>Создан: {% load post_tags %}{{ post.created_at|format_date }}</p>
-    <h3>Комментарии</h3>
-    {% for comment in post.comments.all %}
-        <p>{{ comment.text }} ({{ comment.created_at|format_date }})</p>
-    {% empty %}
-        <p>Пока нет комментариев.</p>
-    {% endfor %}
-    <a href="{% url 'posts:post_list' %}">Назад</a>
+    <div class="post">
+        <p>{{ post.content }}</p>
+        {% if post.image %}
+            <img src="{{ post.image.url }}" alt="{{ post.title }}" width="300">
+        {% endif %}
+        <p><strong>Автор:</strong> {{ post.author.username }}</p>
+        <p><strong>Создан:</strong> {{ post.created_at }}</p>
+        <p><strong>Статус:</strong> {% if post.is_active %}Активен{% else %}Неактивен{% endif %}</p>
+        <p><strong>Просмотры:</strong> {{ post.views }}</p>
+        {% if post.origins.all %}
+            <h3>Происхождение:</h3>
+            <ul>
+                {% for origin in post.origins.all %}
+                    <li>
+                        <strong>Родитель:</strong> {{ origin.parent_name }}<br>
+                        <strong>Место происхождения:</strong> {{ origin.origin }}<br>
+                        {% if origin.description %}
+                            <strong>Описание:</strong> {{ origin.description }}<br>
+                        {% endif %}
+                    </li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+        <h3>Комментарии</h3>
+        {% for comment in post.comments.all %}
+            <p>{{ comment.text }} ({{ comment.created_at }})</p>
+        {% empty %}
+            <p>Пока нет комментариев.</p>
+        {% endfor %}
+        <p>
+            <a href="{% url 'posts:post_list' %}">Назад</a>
+            {% if user.is_authenticated and user == post.author or can_change %}
+                | <a href="{% url 'posts:post_update' post.id %}">Редактировать</a>
+            {% endif %}
+            {% if user.is_authenticated and user == post.author or can_delete %}
+                | <a href="{% url 'posts:post_delete' post.id %}">Удалить</a>
+            {% endif %}
+            {% if can_change %}
+                | <a href="{% url 'posts:toggle_active' post.id %}">Сменить статус</a>
+            {% endif %}
+        </p>
+    </div>
 </body>
 </html>
