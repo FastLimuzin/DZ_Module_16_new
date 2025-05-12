@@ -1,10 +1,16 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
+    <title>Профиль {{ user.username }}</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
 </head>
 <body>
-$END$
+    <h1>Профиль {{ user.username }}</h1>
+    <p><strong>Email:</strong> {{ user.email|default:"Не указан" }}</p>
+    <p><strong>Дата регистрации:</strong> {{ user.date_joined }}</p>
+    <p><strong>Постов:</strong> {{ user.posts.count }}</p>
+    <p><a href="{% url 'users:user_list' %}">Назад к списку пользователей</a></p>
+    <p><a href="{% url 'posts:post_list' %}">Назад к постам</a></p>
 </body>
 </html>

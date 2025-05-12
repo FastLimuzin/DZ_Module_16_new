@@ -1,6 +1,7 @@
-from django.views.generic import FormView, TemplateView, UpdateView, View
+from django.views.generic import FormView, TemplateView, UpdateView, View, ListView, DetailView
 from django.contrib.auth.views import LoginView, PasswordChangeView
 from django.contrib.auth.forms import AuthenticationForm, PasswordChangeForm
+from django.contrib.auth.models import User
 from .forms import CustomUserCreationForm, CustomUserUpdateForm
 from django.contrib.auth import login, logout, update_session_auth_hash
 from django.urls import reverse_lazy
@@ -10,6 +11,7 @@ from django.shortcuts import redirect
 import random
 import string
 from django.views.decorators.csrf import csrf_protect
+from django.core.paginator import Paginator
 
 def generate_random_password():
     """Generate a random 8-character password."""
@@ -104,3 +106,19 @@ class UserLogoutView(View):
     def get(self, request, *args, **kwargs):
         logout(request)
         return redirect('users:login')
+
+class UserListView(LoginRequiredMixin, ListView):
+    model = User
+    template_name = 'users/user_list.html'
+    context_object_name = 'users'
+    login_url = reverse_lazy('users:login')
+    paginate_by = 5  # Пагинация: 5 пользователей на страницу
+
+class UserDetailView(LoginRequiredMixin, DetailView):
+    model = User
+    template_name = 'users/user_detail.html'
+    context_object_name = 'user'
+    login_url = reverse_lazy('users:login')
+
+    def get_object(self):
+        return User.objects.get(username=self.kwargs['username'])

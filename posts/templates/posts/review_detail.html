@@ -1,10 +1,16 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
+    <title>Отзыв {{ review.slug }}</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
 </head>
 <body>
-$END$
+    <h1>Отзыв {{ review.slug }}</h1>
+    <p><strong>Текст:</strong> {{ review.text }}</p>
+    <p><strong>Оценка:</strong> {{ review.rating }}</p>
+    <p><strong>Автор:</strong> {{ review.author.username }}</p>
+    <p><strong>Дата создания:</strong> {{ review.created_at }}</p>
+    <p><a href="{% url 'posts:post_detail' review.post.id %}">Назад к посту</a></p>
 </body>
 </html>

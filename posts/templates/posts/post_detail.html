@@ -36,8 +36,25 @@
         {% empty %}
             <p>Пока нет комментариев.</p>
         {% endfor %}
+        <h3>Отзывы</h3>
+        {% for review in reviews %}
+            <p>
+                {{ review.text }} (Оценка: {{ review.rating }}, {{ review.created_at }}, Автор: {{ review.author.username }})
+                <a href="{% url 'posts:review_detail' review.slug %}">Подробнее</a>
+            </p>
+        {% empty %}
+            <p>Пока нет отзывов.</p>
+        {% endfor %}
+        {% if user.is_authenticated %}
+            <h3>Оставить отзыв</h3>
+            <form method="post" action="{% url 'posts:review_create' post.id %}">
+                {% csrf_token %}
+                {{ review_form.as_p }}
+                <button type="submit">Отправить отзыв</button>
+            </form>
+        {% endif %}
         <p>
-            <a href="{% url 'posts:post_list' %}">Назад</a>
+            <a href="{% url 'posts:post_list' %}?page=1">Назад</a>
             {% if user.is_authenticated and user == post.author or can_change %}
                 | <a href="{% url 'posts:post_update' post.id %}">Редактировать</a>
             {% endif %}

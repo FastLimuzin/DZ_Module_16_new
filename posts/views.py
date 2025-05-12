@@ -1,23 +1,21 @@
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
-from .models import Post
-from .forms import PostForm, PostOriginFormSet
+from .models import Post, Review
+from .forms import PostForm, PostOriginFormSet, ReviewForm
 from django.urls import reverse_lazy
-from django.contrib import messages
 from django.shortcuts import redirect, get_object_or_404
-from django.views.decorators.cache import cache_page
-from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import permission_required
 from django.http import HttpResponseForbidden
-from django.shortcuts import render
 from django.core.mail import send_mail
 from django.conf import settings
+from django.core.paginator import Paginator
 
 class PostListView(ListView):
     model = Post
     template_name = 'posts/post_list.html'
     context_object_name = 'posts'
     ordering = ['-created_at']
+    paginate_by = 5  # Пагинация: 5 постов на страницу
 
     def get_queryset(self):
         if not self.request.user.is_authenticated:
@@ -58,6 +56,8 @@ class PostDetailView(DetailView):
         context = super().get_context_data(**kwargs)
         context['can_change'] = self.request.user.has_perm('posts.change_post')
         context['can_delete'] = self.request.user.has_perm('posts.delete_post')
+        context['review_form'] = ReviewForm()
+        context['reviews'] = self.object.reviews.all()
         return context
 
 class PostCreateView(LoginRequiredMixin, CreateView):
@@ -150,6 +150,31 @@ class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
 
     def form_valid(self, form):
         return super().form_valid(form)
+
+class ReviewCreateView(LoginRequiredMixin, CreateView):
+    model = Review
+    form_class = ReviewForm
+    template_name = 'posts/review_form.html'
+    success_url = reverse_lazy('posts:post_list')
+
+    def form_valid(self, form):
+        form.instance.author = self.request.user
+        form.instance.post_id = self.kwargs['pk']
+        return super().form_valid(form)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['post_id'] = self.kwargs['pk']
+        return context
+
+class ReviewDetailView(DetailView):
+    model = Review
+    template_name = 'posts/review_detail.html'
+    context_object_name = 'review'
+    slug_url_kwarg = 'review_slug'
+
+    def get_object(self):
+        return Review.objects.get(slug=self.kwargs['review_slug'])
 
 @permission_required('posts.change_post', raise_exception=True)
 def toggle_post_active(request, pk):

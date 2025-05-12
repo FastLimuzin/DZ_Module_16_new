@@ -1,10 +1,35 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
+    <title>Список пользователей</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
 </head>
 <body>
-$END$
+    <h1>Список пользователей</h1>
+    <ul>
+        {% for user in users %}
+            <li>
+                <a href="{% url 'users:user_detail' user.username %}">{{ user.username }}</a>
+                (Постов: {{ user.posts.count }})
+            </li>
+        {% empty %}
+            <li>Нет пользователей.</li>
+        {% endfor %}
+    </ul>
+    {% if page_obj.has_other_pages %}
+        <div>
+            {% if page_obj.has_previous %}
+                <a href="?page={{ page_obj.previous_page_number }}">Предыдущая</a>
+            {% endif %}
+            {% for num in page_obj.paginator.page_range %}
+                <a href="?page={{ num }}" {% if page_obj.number == num %}style="font-weight:bold;"{% endif %}>{{ num }}</a>
+            {% endfor %}
+            {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}">Следующая</a>
+            {% endif %}
+        </div>
+    {% endif %}
+    <p><a href="{% url 'posts:post_list' %}?page=1">Назад к постам</a></p>
 </body>
 </html>
