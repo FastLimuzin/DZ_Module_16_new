@@ -7,6 +7,10 @@
 </head>
 <body>
     <h1>Посты Marvel</h1>
+    <form method="get" action="{% url 'posts:search' %}">
+        <input type="text" name="q" placeholder="Поиск по заголовку или месту происхождения">
+        <button type="submit">Поиск</button>
+    </form>
     {% if user.is_authenticated %}
         <p><a href="{% url 'posts:post_create' %}">Создать пост</a></p>
     {% endif %}

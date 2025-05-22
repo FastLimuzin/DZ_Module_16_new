@@ -9,7 +9,7 @@ https://docs.djangoproject.com/en/5.0/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.0/ref/settings/
 """
-
+import os
 from pathlib import Path
 from decouple import config
 
@@ -52,6 +52,10 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'config.urls'
 
+FIXTURE_DIRS = [
+    os.path.join(BASE_DIR, 'posts/fixtures'),
+    os.path.join(BASE_DIR, 'sessions/fixtures'),
+]
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -140,7 +144,7 @@ EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'fastlimuzin@gmail.com'
-EMAIL_HOST_PASSWORD = '123War456%'  # Замени на пароль Gmail
+EMAIL_HOST_PASSWORD = '123War456%'  #  пароль Gmail
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
 # Настройки авторизации

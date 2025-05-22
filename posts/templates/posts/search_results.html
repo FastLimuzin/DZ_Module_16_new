@@ -1,10 +1,57 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
+    <title>Результаты поиска</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
 </head>
 <body>
-$END$
+    <h1>Результаты поиска: "{{ query }}"</h1>
+    {% if posts %}
+        {% for post in posts %}
+            <div class="post">
+                <h2>{{ post.title }}</h2>
+                <p>{{ post.content }}</p>
+                {% if post.image %}
+                    <img src="{{ post.image.url }}" alt="{{ post.title }}">
+                {% endif %}
+                <p><strong>Автор:</strong> {{ post.author.username }}</p>
+                <p><strong>Дата создания:</strong> {{ post.created_at }}</p>
+                <p><strong>Статус:</strong> {% if post.is_active %}Активен{% else %}Неактивен{% endif %}</p>
+                {% if post.origins.all %}
+                    <h3>Происхождение:</h3>
+                    <ul>
+                        {% for origin in post.origins.all %}
+                            <li>
+                                <strong>Родитель:</strong> {{ origin.parent_name }}<br>
+                                <strong>Место происхождения:</strong> {{ origin.origin }}<br>
+                                {% if origin.description %}
+                                    <strong>Описание:</strong> {{ origin.description }}<br>
+                                {% endif %}
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+                <p><a href="{% url 'posts:post_detail' post.id %}">Подробнее</a></p>
+            </div>
+            <hr>
+        {% endfor %}
+        {% if page_obj.has_other_pages %}
+            <div>
+                {% if page_obj.has_previous %}
+                    <a href="?q={{ query }}&page={{ page_obj.previous_page_number }}">Предыдущая</a>
+                {% endif %}
+                {% for num in page_obj.paginator.page_range %}
+                    <a href="?q={{ query }}&page={{ num }}" {% if page_obj.number == num %}style="font-weight:bold;"{% endif %}>{{ num }}</a>
+                {% endfor %}
+                {% if page_obj.has_next %}
+                    <a href="?q={{ query }}&page={{ page_obj.next_page_number }}">Следующая</a>
+                {% endif %}
+            </div>
+        {% endif %}
+    {% else %}
+        <p>Ничего не найдено по запросу "{{ query }}".</p>
+    {% endif %}
+    <p><a href="{% url 'posts:post_list' %}?page=1">Назад к постам</a></p>
 </body>
 </html>

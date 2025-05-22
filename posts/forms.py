@@ -2,7 +2,7 @@ from django import forms
 from django.forms import inlineformset_factory
 from .models import Post, Origin
 from django import forms
-from .models import Review
+from .models import Post, Review
 
 class ReviewForm(forms.ModelForm):
     class Meta:
@@ -17,7 +17,7 @@ class ReviewForm(forms.ModelForm):
 class PostForm(forms.ModelForm):
     class Meta:
         model = Post
-        fields = ['title', 'content', 'image']
+        fields = ['title', 'content', 'image', 'is_active']
         labels = {
             'title': 'Заголовок',
             'content': 'Содержание',

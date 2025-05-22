@@ -1,25 +1,75 @@
-# Домашняя работа - Модуль 16 (Django)
+Marvel Posts Project
+Описание проекта
+Этот проект представляет собой веб-приложение на Django, посвящённое персонажам Marvel. Пользователи могут:
 
-## Задание 1
-- Подключение к MS SQL Server, модель `User`.
+Создавать, редактировать и удалять посты о персонажах Marvel.
+Добавлять информацию о происхождении персонажей (место происхождения, родители).
+Оставлять отзывы с оценками к постам.
+Искать посты по заголовку или месту происхождения.
+Просматривать список пользователей и их профили.
+Модераторы могут управлять активностью постов.
 
-## Задание 2
-- Приложение `posts` с моделями `Post` и `Comment`, `STATIC` и `MEDIA`.
+Основные функции:
 
-## Задание 3
-- CRUD для `Post`, стили, templatetags.
+Регистрация, вход и управление профилем.
+Создание постов с изображениями и информацией о происхождении.
+Счётчик просмотров постов с уведомлением по email при кратности 100 просмотров.
+Отзывы с уникальным slug.
+Поиск по заголовкам постов и местам происхождения.
+Пагинация (по 5 постов/пользователей на страницу).
 
-## Задание 4
-- Регистрация, вход, профиль, выход.
+Требования
 
-## Установка
-1. Склонируйте: `git clone https://github.com/FastLimuzin/DZ_Module_16_new.git`
-2. Создайте venv: `python -m venv .venv`
-3. Активируйте: `.venv\Scripts\activate` (Windows)
-4. Установите: `pip install -r requirements.txt`
-5. Установите драйвер: [ODBC Driver 18 for SQL Server](https://learn.microsoft.com/en-us/sql/connect/odbc/download-odbc-driver-for-sql-server)
-6. Скопируйте `.env_sample` в `.env` и настройте базу.
-7. Создайте базу: `CREATE DATABASE your_db_name;`
-8. Миграции: `python manage.py migrate`
-9. Суперпользователь: `python manage.py createsuperuser`
-10. Запуск: `python manage.py runserver`
+Python 3.10+
+Django 5.0.14
+Зависимости из requirements.txt
+
+Инструкции по запуску
+
+Клонируйте репозиторий:
+git clone <repository_url>
+cd DZ_Module_16_new
+
+
+Создайте и активируйте виртуальное окружение:
+python -m venv .venv
+source .venv/bin/activate  # Для Windows: .venv\Scripts\activate
+
+
+Установите зависимости:
+pip install -r requirements.txt
+
+
+Создайте и примените миграции:
+python manage.py makemigrations
+python manage.py migrate
+
+
+Создайте суперпользователя (для админки):
+python manage.py createsuperuser
+
+
+Запустите сервер:
+python manage.py runserver
+
+
+Откройте приложение:
+
+Перейдите на http://127.0.0.1:8000/ для просмотра постов.
+Админка: http://127.0.0.1:8000/admin/.
+
+
+
+Структура проекта
+
+posts/: Приложение для управления постами, отзывами и происхождением.
+users/: Приложение для управления пользователями (регистрация, вход, профиль).
+config/: Настройки проекта.
+templates/: Шаблоны.
+static/: Статические файлы (CSS).
+
+Дополнительно
+
+Для тестирования email-уведомлений используется EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'.
+Убедитесь, что папка media/ доступна для загрузки изображений.
+

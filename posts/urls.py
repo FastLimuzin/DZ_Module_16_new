@@ -1,6 +1,7 @@
 from django.urls import path
 from . import views
 
+
 app_name = 'posts'
 
 urlpatterns = [
@@ -12,4 +13,5 @@ urlpatterns = [
     path('post/<int:pk>/toggle-active/', views.toggle_post_active, name='toggle_active'),
     path('post/<int:pk>/review/', views.ReviewCreateView.as_view(), name='review_create'),
     path('review/<slug:review_slug>/', views.ReviewDetailView.as_view(), name='review_detail'),
+    path('search/', views.SearchView.as_view(), name='search'),
 ]
